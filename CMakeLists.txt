@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 project(lstm)
 
@@ -20,6 +20,8 @@ if (NOT CONFIGURED_ONCE)
         CACHE STRING "Flags used by the compiler during all build types." FORCE)
 endif()
 
+include_directories(include)
+
 find_package(Boost COMPONENTS system filesystem timer REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -27,6 +29,7 @@ set(Eigen3_DIR /usr/local/share/eigen3/cmake/)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_executable (lstm main.cpp)
+target_sources(lstm PUBLIC "lstm.cpp")
 target_link_libraries (lstm Eigen3::Eigen)
 target_link_libraries(lstm 
   ${Boost_FILESYSTEM_LIBRARY}
