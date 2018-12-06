@@ -64,8 +64,10 @@ class LSTMCell {
     Eigen::RowVectorXf bo;
 
   protected:
-    Eigen::MatrixXf h; // Hidden states of the cell
-    Eigen::MatrixXf c; // Memory cell states of the cell
+    Eigen::MatrixXf h; // hidden state
+    Eigen::MatrixXf c; // cell state
+
+    friend class LSTM;
 
   public:
     explicit LSTMCell(const int &, const int &);
@@ -75,14 +77,43 @@ class LSTMCell {
     void backward();
 };
 
+/**
+ * LSTMCell Constructor.
+ * 
+ * @param hidden_size the size of the hidden state and cell state.
+ * @param batch_size the size of batch used during training (for vectorization purposes).
+ */
 LSTMCell::LSTMCell(const int &hidden_size, const int &batch_size) {
 }
 
+/**
+ * LSTMCell Forward Pass.
+ * 
+ * @param xt the input vector at time-step t.
+ * @returns the output i.e. the hidden state at time-step t.
+ */
 Eigen::MatrixXf &LSTMCell::forward(const Eigen::MatrixXf &xt) {
+    // it: input gate
     Eigen::MatrixXf it = F::sigmoid((Wxi * xt) + (Whi * h) + (Wci * c) + bi);
+    // ft: forget gate
     Eigen::MatrixXf ft = F::sigmoid((Wxf * xt) + (Whf * h) + (Wcf * c) + bf);
+    // update cell state
     c = (ft * c) + (it * F::tanh((Wxc * xt) + (Whc * h) + bc));
+    // ot: output gate
     Eigen::MatrixXf ot = F::sigmoid((Wxo * xt) + (Who * h) + (Wco * c) + bo);
+    // update hidden state
     h = ot * F::sigmoid(c);
     return h;
 }
+
+/**
+ * LSTMCell Backward Pass.
+ * 
+ * @param xt the input vector at time-step t.
+ * @returns the output i.e. the hidden state at time-step t.
+ */
+void LSTMCell::backward() {
+}
+
+class LSTM {
+};
