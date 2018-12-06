@@ -35,46 +35,69 @@
 #include <vector>
 
 #include <Eigen/Dense>
+using namespace Eigen;
 
 #include "functions.hpp"
 
+namespace nn {
+
+class Dense {
+  private:
+    MatrixXf W;
+    RowVectorXf b;
+
+  public:
+    explicit Dense(const int &, const int &);
+
+    MatrixXf forward(const MatrixXf &);
+
+    std::pair<MatrixXf, MatrixXf> backward(const MatrixXf &, const MatrixXf &);
+};
+
+Dense::Dense(const int &num_inputs, const int &num_outputs) {
+    W = MatrixXf(num_inputs, num_outputs).setRandom() * F::glorot_uniform(num_inputs, num_outputs);
+    b = RowVectorXf(num_outputs).setZero();
+}
+
+MatrixXf Dense::forward(const MatrixXf &inputs) {
+    return (inputs * W) + b;
+}
+
+std::pair<MatrixXf, MatrixXf> Dense::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
+}
+
+struct LSTMState {
+    // hidden state
+    MatrixXf h;
+    // cell state
+    MatrixXf c;
+};
+
 class LSTMCell {
   private:
-    // input operations' weights
-    Eigen::MatrixXf Wxi;
-    Eigen::MatrixXf Wxf;
-    Eigen::MatrixXf Wxc;
-    Eigen::MatrixXf Wxo;
+    // operations' weights
+    MatrixXf Wi;
+    MatrixXf Wf;
+    MatrixXf Wc;
+    MatrixXf Wo;
 
-    // hidden operations' weights
-    Eigen::MatrixXf Whi;
-    Eigen::MatrixXf Whf;
-    Eigen::MatrixXf Whc;
-    Eigen::MatrixXf Who;
-
-    // cell operations' weights
-    Eigen::MatrixXf Wci;
-    Eigen::MatrixXf Wcf;
-    Eigen::MatrixXf Wco;
-
-    // bias terms for operations
-    Eigen::RowVectorXf bi;
-    Eigen::RowVectorXf bf;
-    Eigen::RowVectorXf bc;
-    Eigen::RowVectorXf bo;
+    // operations' biases
+    RowVectorXf bi;
+    RowVectorXf bf;
+    RowVectorXf bc;
+    RowVectorXf bo;
 
   protected:
-    Eigen::MatrixXf h; // hidden state
-    Eigen::MatrixXf c; // cell state
+    LSTMState states;
 
-    friend class LSTM;
+    friend class LSTMNetwork;
 
   public:
     explicit LSTMCell(const int &, const int &);
 
-    Eigen::MatrixXf &forward(const Eigen::MatrixXf &);
+    void forward(const MatrixXf &);
 
-    void backward();
+    std::pair<MatrixXf, MatrixXf> backward(const MatrixXf &, const MatrixXf &);
 };
 
 /**
@@ -90,20 +113,22 @@ LSTMCell::LSTMCell(const int &hidden_size, const int &batch_size) {
  * LSTMCell Forward Pass.
  * 
  * @param xt the input vector at time-step t.
- * @returns the output i.e. the hidden state at time-step t.
  */
-Eigen::MatrixXf &LSTMCell::forward(const Eigen::MatrixXf &xt) {
+void LSTMCell::forward(const MatrixXf &xt) {
+    // concatenate ht-1 and xt
+    MatrixXf zt(states.h.rows(), xt.cols() + xt.cols());
+    zt << states.h, xt;
     // it: input gate
-    Eigen::MatrixXf it = F::sigmoid((Wxi * xt) + (Whi * h) + (Wci * c) + bi);
+    MatrixXf it = F::sigmoid((Wi * zt) + bi);
     // ft: forget gate
-    Eigen::MatrixXf ft = F::sigmoid((Wxf * xt) + (Whf * h) + (Wcf * c) + bf);
+    MatrixXf ft = F::sigmoid((Wf * zt) + bf);
     // update cell state
-    c = (ft * c) + (it * F::tanh((Wxc * xt) + (Whc * h) + bc));
+    MatrixXf ct_update = F::tanh((Wc * zt) + bc);
+    states.c = (ft * states.c) + (it * ct_update);
     // ot: output gate
-    Eigen::MatrixXf ot = F::sigmoid((Wxo * xt) + (Who * h) + (Wco * c) + bo);
+    MatrixXf ot = F::sigmoid((Wo * zt) + bo);
     // update hidden state
-    h = ot * F::sigmoid(c);
-    return h;
+    states.h = ot * F::sigmoid(states.c);
 }
 
 /**
@@ -112,8 +137,9 @@ Eigen::MatrixXf &LSTMCell::forward(const Eigen::MatrixXf &xt) {
  * @param xt the input vector at time-step t.
  * @returns the output i.e. the hidden state at time-step t.
  */
-void LSTMCell::backward() {
+std::pair<MatrixXf, MatrixXf> LSTMCell::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
 }
 
-class LSTM {
+class LSTMNetwork {
 };
+} // namespace nn

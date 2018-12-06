@@ -35,11 +35,18 @@
 #include <vector>
 
 #include <Eigen/Dense>
+using namespace Eigen;
 
 namespace F {
-Eigen::MatrixXd sigmoid(const Eigen::MatrixXd &);
+float glorot_uniform(const int &n_in, const int &n_out) {
+    return 2.0 / (n_in + n_out);
+}
 
-Eigen::MatrixXd relu(const Eigen::MatrixXd &);
+MatrixXf sigmoid(const MatrixXf &);
 
-Eigen::MatrixXd tanh(const Eigen::MatrixXd &);
+MatrixXf relu(const MatrixXf &);
+
+MatrixXf tanh(const MatrixXf &);
+
+MatrixXf softmax(const MatrixXf &);
 } // namespace F
