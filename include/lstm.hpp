@@ -22,3 +22,67 @@
  * SOFTWARE.
  */
 #pragma once
+
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <limits>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <Eigen/Dense>
+
+#include "functions.hpp"
+
+class LSTMCell {
+  private:
+    // input operations' weights
+    Eigen::MatrixXf Wxi;
+    Eigen::MatrixXf Wxf;
+    Eigen::MatrixXf Wxc;
+    Eigen::MatrixXf Wxo;
+
+    // hidden operations' weights
+    Eigen::MatrixXf Whi;
+    Eigen::MatrixXf Whf;
+    Eigen::MatrixXf Whc;
+    Eigen::MatrixXf Who;
+
+    // cell operations' weights
+    Eigen::MatrixXf Wci;
+    Eigen::MatrixXf Wcf;
+    Eigen::MatrixXf Wco;
+
+    // bias terms for operations
+    Eigen::RowVectorXf bi;
+    Eigen::RowVectorXf bf;
+    Eigen::RowVectorXf bc;
+    Eigen::RowVectorXf bo;
+
+  protected:
+    Eigen::MatrixXf h; // Hidden states of the cell
+    Eigen::MatrixXf c; // Memory cell states of the cell
+
+  public:
+    explicit LSTMCell(const int &, const int &);
+
+    Eigen::MatrixXf &forward(const Eigen::MatrixXf &);
+
+    void backward();
+};
+
+LSTMCell::LSTMCell(const int &hidden_size, const int &batch_size) {
+}
+
+Eigen::MatrixXf &LSTMCell::forward(const Eigen::MatrixXf &xt) {
+    Eigen::MatrixXf it = F::sigmoid((Wxi * xt) + (Whi * h) + (Wci * c) + bi);
+    Eigen::MatrixXf ft = F::sigmoid((Wxf * xt) + (Whf * h) + (Wcf * c) + bf);
+    c = (ft * c) + (it * F::tanh((Wxc * xt) + (Whc * h) + bc));
+    Eigen::MatrixXf ot = F::sigmoid((Wxo * xt) + (Who * h) + (Wco * c) + bo);
+    h = ot * F::sigmoid(c);
+    return h;
+}

@@ -29,7 +29,6 @@ set(Eigen3_DIR /usr/local/share/eigen3/cmake/)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_executable (lstm main.cpp)
-target_sources(lstm PUBLIC "lstm.cpp")
 target_link_libraries (lstm Eigen3::Eigen)
 target_link_libraries(lstm 
   ${Boost_FILESYSTEM_LIBRARY}

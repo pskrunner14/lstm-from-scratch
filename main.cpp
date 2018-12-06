@@ -32,11 +32,24 @@
 #include <utility>
 #include <vector>
 
-#include "lstm.hpp"
-#include "util.cpp"
+// #include "lstm.hpp"
+// #include "util.cpp"
+#include <Eigen/Dense>
+
+using namespace Eigen;
 
 int main() {
-    std::cout << "project built!" << std::endl;
+    // std::cout << "project built!" << std::endl;
+    MatrixXf a(4, 8);
+    a.setOnes();
+
+    MatrixXf b(4, 8);
+    b.setOnes();
+
+    MatrixXf c = a.cwiseProduct(b);
+
+    // MatrixXf c = a * b;
+    std::cout << c << std::endl;
 
     return 0;
 }

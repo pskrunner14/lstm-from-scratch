@@ -21,3 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#pragma once
+
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <limits>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <Eigen/Dense>
+
+namespace F {
+Eigen::MatrixXd sigmoid(const Eigen::MatrixXd &);
+
+Eigen::MatrixXd relu(const Eigen::MatrixXd &);
+
+Eigen::MatrixXd tanh(const Eigen::MatrixXd &);
+} // namespace F
