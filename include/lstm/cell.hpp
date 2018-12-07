@@ -98,7 +98,6 @@ LSTMCell::LSTMCell(const int &hidden_size, const int &embedding_dim, const int &
 MatrixXf &LSTMCell::forward(const MatrixXf &xt) {
     // i2h + h2h = [it_pre, ft_pre, ot_pre, x_pre]
     MatrixXf preactivations = i2h.forward(xt) + h2h.forward(states.h);
-    std::cout << preactivations.size() << std::endl;
     // all pre sigmoid gates chunk
     MatrixXf pre_sigmoid_chunk = preactivations.block(0, 0, batch_size, 3 * hidden_size);
     // compute sigmoid on gates chunk

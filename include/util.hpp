@@ -34,6 +34,7 @@
 #include <utility>
 #include <vector>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/string_file.hpp>
@@ -41,15 +42,16 @@
 
 namespace util {
 
-std::vector<std::string> load_dataset(const std::string &filename) {
-    std::string str;
-    std::vector<std::string> contents;
+std::vector<std::vector<std::string>> load_dataset(const std::string &filename) {
+    std::string line;
+    std::vector<std::vector<std::string>> contents;
 
     boost::filesystem::ifstream file(filename);
-    while (std::getline(file, str)) {
-        contents.push_back(str);
+    while (std::getline(file, line)) {
+        std::vector<std::string> strs;
+        boost::split(strs, line, boost::is_any_of(" "));
+        contents.push_back(strs);
     }
-
     return contents;
 }
 } // namespace util

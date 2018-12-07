@@ -40,11 +40,24 @@ using namespace Eigen;
 #include "util.hpp"
 
 int main() {
+    // load data
+    std::vector<std::vector<std::string>> X_train = util::load_dataset("data/train/src.txt");
+    std::vector<std::vector<std::string>> y_train = util::load_dataset("data/train/tgt.txt");
+    std::vector<std::vector<std::string>> X_dev = util::load_dataset("data/dev/src.txt");
+    std::vector<std::vector<std::string>> X_dev = util::load_dataset("data/dev/tgt.txt");
+    std::vector<std::vector<std::string>> X_test = util::load_dataset("data/test/src.txt");
+    std::vector<std::vector<std::string>> X_test = util::load_dataset("data/test/tgt.txt");
+
     nn::LSTMCell lstm(128, 64, 64);
     MatrixXf input(64, 64);
     input.setRandom();
 
-    std::cout << lstm.forward(input) << std::endl;
+    MatrixXf h = lstm.forward(input);
+    std::cout << h.rows() << "x" << h.cols() << std::endl;
+
+    for (auto const &num : X_train[0]) {
+        std::cout << num << std::endl;
+    }
 
     return 0;
 }
