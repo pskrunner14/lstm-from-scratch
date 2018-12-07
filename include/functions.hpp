@@ -35,18 +35,33 @@
 #include <vector>
 
 #include <Eigen/Dense>
+#include <unsupported/Eigen/MatrixFunctions>
 using namespace Eigen;
 
 namespace F {
-float glorot_uniform(const int &n_in, const int &n_out) {
+
+inline float glorot_uniform(const int &n_in, const int &n_out) {
     return 2.0 / (n_in + n_out);
 }
 
-MatrixXf sigmoid(const MatrixXf &);
+inline MatrixXf sigmoid(const MatrixXf &x) {
+    return (1.0 + (-x).array().exp()).inverse().matrix();
+}
 
-MatrixXf relu(const MatrixXf &);
+inline MatrixXf sigmoid_derivative(const MatrixXf &x) {
+    return x * (1 - x.array()).matrix();
+}
 
-MatrixXf tanh(const MatrixXf &);
+inline MatrixXf relu(const MatrixXf &x) {
+    return x.cwiseMax(0.0);
+}
 
-MatrixXf softmax(const MatrixXf &);
+MatrixXf tanh(const MatrixXf &x) {
+    return sigmoid(x);
+}
+
+MatrixXf log_softmax(const MatrixXf &x) {
+    auto e = x.array().exp();
+    return (e / e.sum()).log().matrix();
+}
 } // namespace F

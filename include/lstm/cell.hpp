@@ -41,7 +41,7 @@ using namespace Eigen;
 #include "layers.hpp"
 #include "lstm/network.hpp"
 
-namespace RNN {
+namespace nn {
 
 struct LSTMState {
     // hidden state
@@ -56,8 +56,8 @@ class LSTMCell {
     int hidden_size;
     int embedding_dim;
 
-    nn::Dense i2h;
-    nn::Dense h2h;
+    Dense i2h;
+    Dense h2h;
 
   protected:
     LSTMState states;
@@ -69,7 +69,7 @@ class LSTMCell {
 
     MatrixXf &forward(const MatrixXf &);
 
-    MatrixXf backward(const MatrixXf &, const MatrixXf &);
+    // MatrixXf backward(const MatrixXf &, const MatrixXf &);
 };
 
 /**
@@ -79,7 +79,7 @@ class LSTMCell {
  * @param batch_size the size of batch used during training (for vectorization purposes).
  */
 LSTMCell::LSTMCell(const int &hidden_size, const int &embedding_dim, const int &batch_size)
-    : i2h(nn::Dense(embedding_dim, 4 * hidden_size)), h2h(nn::Dense(hidden_size, 4 * hidden_size)) {
+    : i2h(Dense(embedding_dim, 4 * hidden_size)), h2h(Dense(hidden_size, 4 * hidden_size)) {
 
     this->hidden_size = hidden_size;
     this->embedding_dim = embedding_dim;
@@ -93,11 +93,12 @@ LSTMCell::LSTMCell(const int &hidden_size, const int &embedding_dim, const int &
  * LSTMCell Forward Pass.
  * 
  * @param xt the input vector at time-step t.
- * @returns the next hidden state as input for next lstm layer.
+ * @returns the next hidden state for input into next lstm layer.
  */
 MatrixXf &LSTMCell::forward(const MatrixXf &xt) {
     // i2h + h2h = [it_pre, ft_pre, ot_pre, x_pre]
     MatrixXf preactivations = i2h.forward(xt) + h2h.forward(states.h);
+    std::cout << preactivations.size() << std::endl;
     // all pre sigmoid gates chunk
     MatrixXf pre_sigmoid_chunk = preactivations.block(0, 0, batch_size, 3 * hidden_size);
     // compute sigmoid on gates chunk
@@ -126,6 +127,6 @@ MatrixXf &LSTMCell::forward(const MatrixXf &xt) {
  * @param gradients the gradients from upper layers computed using chain rule.
  * @returns the output i.e. the hidden state at time-step t.
  */
-MatrixXf LSTMCell::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
-}
-} // namespace RNN
+// MatrixXf LSTMCell::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
+// }
+} // namespace nn

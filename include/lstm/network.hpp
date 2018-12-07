@@ -41,8 +41,8 @@ using namespace Eigen;
 #include "layers.hpp"
 #include "lstm/cell.hpp"
 
-namespace RNN {
+namespace nn {
 
 class LSTMNetwork {
 };
-} // namespace RNN
+} // namespace nn

@@ -33,12 +33,18 @@
 #include <vector>
 
 #include <Eigen/Dense>
+#include <unsupported/Eigen/MatrixFunctions>
 using namespace Eigen;
 
 #include "lstm/network.hpp"
 #include "util.hpp"
 
 int main() {
+    nn::LSTMCell lstm(128, 64, 64);
+    MatrixXf input(64, 64);
+    input.setRandom();
+
+    std::cout << lstm.forward(input) << std::endl;
 
     return 0;
 }

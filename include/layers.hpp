@@ -51,7 +51,7 @@ class Dense {
 
     MatrixXf forward(const MatrixXf &);
 
-    MatrixXf backward(const MatrixXf &, const MatrixXf &);
+    // MatrixXf backward(const MatrixXf &, const MatrixXf &);
 };
 
 Dense::Dense(const int &num_inputs, const int &num_outputs) {
@@ -60,9 +60,11 @@ Dense::Dense(const int &num_inputs, const int &num_outputs) {
 }
 
 MatrixXf Dense::forward(const MatrixXf &inputs) {
-    return (inputs * W) + b;
+    MatrixXf Z = inputs * W;
+    Z += b.replicate(inputs.rows(), 1);
+    return Z;
 }
 
-MatrixXf Dense::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
-}
+// MatrixXf Dense::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
+// }
 } // namespace nn
