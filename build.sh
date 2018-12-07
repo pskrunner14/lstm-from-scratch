@@ -9,3 +9,9 @@ cd build
 cmake ..
 # build project using Makefile
 make
+
+# move to parent directory
+mv lstm ../
+cd ..
+# run executable
+./lstm
