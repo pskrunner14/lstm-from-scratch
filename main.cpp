@@ -35,8 +35,8 @@
 #include <Eigen/Dense>
 using namespace Eigen;
 
-#include "lstm.hpp"
-#include "util.cpp"
+#include "lstm/network.hpp"
+#include "util.hpp"
 
 int main() {
 

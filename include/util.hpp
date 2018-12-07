@@ -21,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#pragma once
+
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
@@ -37,6 +39,8 @@
 #include <boost/filesystem/string_file.hpp>
 #include <boost/timer/timer.hpp>
 
+namespace util {
+
 std::vector<std::string> load_dataset(const std::string &filename) {
     std::string str;
     std::vector<std::string> contents;
@@ -48,3 +52,4 @@ std::vector<std::string> load_dataset(const std::string &filename) {
 
     return contents;
 }
+} // namespace util

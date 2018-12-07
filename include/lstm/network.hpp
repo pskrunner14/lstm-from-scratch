@@ -38,31 +38,11 @@
 using namespace Eigen;
 
 #include "functions.hpp"
+#include "layers.hpp"
+#include "lstm/cell.hpp"
 
-namespace nn {
+namespace RNN {
 
-class Dense {
-  private:
-    MatrixXf W;
-    RowVectorXf b;
-
-  public:
-    explicit Dense(const int &, const int &);
-
-    MatrixXf forward(const MatrixXf &);
-
-    MatrixXf backward(const MatrixXf &, const MatrixXf &);
+class LSTMNetwork {
 };
-
-Dense::Dense(const int &num_inputs, const int &num_outputs) {
-    W = MatrixXf(num_inputs, num_outputs).setRandom() * F::glorot_uniform(num_inputs, num_outputs);
-    b = RowVectorXf(num_outputs).setZero();
-}
-
-MatrixXf Dense::forward(const MatrixXf &inputs) {
-    return (inputs * W) + b;
-}
-
-MatrixXf Dense::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
-}
-} // namespace nn
+} // namespace RNN
