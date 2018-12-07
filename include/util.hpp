@@ -29,7 +29,9 @@
 #include <ctime>
 #include <iostream>
 #include <limits>
+#include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -42,6 +44,14 @@
 
 namespace util {
 
+/**
+ * Loads Dataset.
+ * 
+ * Loads a dataset by reading file into memory.
+ * 
+ * @param filename the name of the file containing data.
+ * @returns the list of lists of tokens by line.
+ */
 std::vector<std::vector<std::string>> load_dataset(const std::string &filename) {
     std::string line;
     std::vector<std::vector<std::string>> contents;
@@ -53,5 +63,25 @@ std::vector<std::vector<std::string>> load_dataset(const std::string &filename) 
         contents.push_back(strs);
     }
     return contents;
+}
+
+std::pair<std::map<std::string, int>, std::map<int, std::string>> generate_vocabs(const std::vector<std::vector<std::string>> &corpus) {
+    std::set<std::string> tokens;
+    std::map<std::string, int> word_to_idx;
+    std::map<int, std::string> idx_to_word;
+
+    for (const auto &line : corpus) {
+        for (const auto &word : line) {
+            tokens.insert(word);
+        }
+    }
+
+    int index = 0;
+    for (const auto &token : tokens) {
+        word_to_idx[token] = index;
+        idx_to_word[index] = token;
+        index++;
+    }
+    return std::pair<std::map<std::string, int>, std::map<int, std::string>>(word_to_idx, idx_to_word);
 }
 } // namespace util

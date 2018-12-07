@@ -67,4 +67,7 @@ MatrixXf Dense::forward(const MatrixXf &inputs) {
 
 // MatrixXf Dense::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
 // }
+
+class Embedding {
+};
 } // namespace nn
