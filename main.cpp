@@ -14,17 +14,18 @@ using namespace Eigen;
 
 int main() {
     // load data
-    std::vector<std::vector<std::string>> X_train = util::load_dataset("data/train/src.txt");
-    std::vector<std::vector<std::string>> y_train = util::load_dataset("data/train/tgt.txt");
-    std::vector<std::vector<std::string>> X_dev = util::load_dataset("data/dev/src.txt");
-    std::vector<std::vector<std::string>> y_dev = util::load_dataset("data/dev/tgt.txt");
-    std::vector<std::vector<std::string>> X_test = util::load_dataset("data/test/src.txt");
-    std::vector<std::vector<std::string>> y_test = util::load_dataset("data/test/tgt.txt");
+    std::vector<std::vector<std::string>> X_train, y_train, X_dev, y_dev, X_test, y_test;
+    util::load_dataset(X_train, "data/train/src.txt");
+    util::load_dataset(y_train, "data/train/tgt.txt");
+    util::load_dataset(X_dev, "data/dev/src.txt");
+    util::load_dataset(y_dev, "data/dev/tgt.txt");
+    util::load_dataset(X_test, "data/test/src.txt");
+    util::load_dataset(y_test, "data/test/tgt.txt");
 
     // create vocabs
-    std::pair<std::map<std::string, int>, std::map<int, std::string>> vocabs = util::generate_vocabs(X_train);
-    std::map<std::string, int> word_to_idx = vocabs.first;
-    std::map<int, std::string> idx_to_word = vocabs.second;
+    std::map<std::string, int> word_to_idx;
+    std::map<int, std::string> idx_to_word;
+    util::generate_vocabs(X_train, word_to_idx, idx_to_word);
 
     std::cout << "Vocabulary (idx: token) with " << word_to_idx.size() << " tokens" << std::endl;
     std::cout << "--------------------------------------" << std::endl;

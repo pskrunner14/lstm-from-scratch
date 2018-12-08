@@ -46,9 +46,8 @@ namespace util {
  * @param filename the name of the file containing data.
  * @returns the list of lists of tokens by line.
  */
-std::vector<std::vector<std::string>> load_dataset(const std::string &filename) {
+void load_dataset(std::vector<std::vector<std::string>> &contents, const std::string &filename) {
     std::string line;
-    std::vector<std::vector<std::string>> contents;
 
     boost::filesystem::ifstream file(filename);
     while (std::getline(file, line)) {
@@ -56,7 +55,6 @@ std::vector<std::vector<std::string>> load_dataset(const std::string &filename) 
         boost::split(strs, line, boost::is_any_of(" "));
         contents.push_back(strs);
     }
-    return contents;
 }
 
 /**
@@ -67,10 +65,8 @@ std::vector<std::vector<std::string>> load_dataset(const std::string &filename) 
  * @param corpus the corpus containing sequences of tokens.
  * @returns the pair of token-to-id and id-to-token maps.
  */
-std::pair<std::map<std::string, int>, std::map<int, std::string>> generate_vocabs(const std::vector<std::vector<std::string>> &corpus) {
+void generate_vocabs(const std::vector<std::vector<std::string>> &corpus, std::map<std::string, int> &word_to_idx, std::map<int, std::string> &idx_to_word) {
     std::set<std::string> tokens;
-    std::map<std::string, int> word_to_idx;
-    std::map<int, std::string> idx_to_word;
 
     for (const auto &line : corpus) {
         for (const auto &word : line) {
@@ -84,6 +80,5 @@ std::pair<std::map<std::string, int>, std::map<int, std::string>> generate_vocab
         idx_to_word[index] = token;
         index++;
     }
-    return std::pair<std::map<std::string, int>, std::map<int, std::string>>(word_to_idx, idx_to_word);
 }
 } // namespace util
