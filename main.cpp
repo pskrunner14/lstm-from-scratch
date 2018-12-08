@@ -34,13 +34,14 @@ int main() {
     }
 
     // create LSTM network
-    nn::LSTMCell lstm(128, 64, 64);
-    MatrixXf input(64, 64);
+    // nn::LSTMCell lstm(128, 64, 64);
+    nn::LSTMNetwork lstm(4, 128, 10, 32, 64);
+    MatrixXf input(64, 10);
     input.setRandom();
 
     // train the model
-    MatrixXf h = lstm(input);
-    std::cout << h.rows() << "x" << h.cols() << std::endl;
+    MatrixXf probs = lstm(input);
+    std::cout << probs.rows() << "x" << probs.cols() << std::endl;
 
     return 0;
 }

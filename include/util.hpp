@@ -65,7 +65,9 @@ void load_dataset(std::vector<std::vector<std::string>> &contents, const std::st
  * @param corpus the corpus containing sequences of tokens.
  * @returns the pair of token-to-id and id-to-token maps.
  */
-void generate_vocabs(const std::vector<std::vector<std::string>> &corpus, std::map<std::string, int> &word_to_idx, std::map<int, std::string> &idx_to_word) {
+void generate_vocabs(const std::vector<std::vector<std::string>> &corpus,
+                     std::map<std::string, int> &word_to_idx,
+                     std::map<int, std::string> &idx_to_word) {
     std::set<std::string> tokens;
 
     for (const auto &line : corpus) {
@@ -81,4 +83,7 @@ void generate_vocabs(const std::vector<std::vector<std::string>> &corpus, std::m
         index++;
     }
 }
+
+class Trainer {
+};
 } // namespace util

@@ -40,9 +40,74 @@ using namespace Eigen;
 #include "functions.hpp"
 #include "layers.hpp"
 #include "lstm/cell.hpp"
+#include "util.hpp"
 
 namespace nn {
 
+std::string SOS_TOKEN = "~";
+std::string EOS_TOKEN = "#";
+
 class LSTMNetwork {
+  private:
+    size_t n_layers;
+    int batch_size;
+    int embedding_dim;
+    int n_tokens;
+    int hidden_size;
+
+    Embedding embedding;
+    std::vector<LSTMCell> layers;
+    Dense out;
+
+    std::vector<std::vector<LSTMState>> states;
+
+    friend class util::Trainer;
+
+  public:
+    explicit LSTMNetwork(const size_t &, const int &, const int &, const int &, const int &);
+
+    MatrixXf operator()(const MatrixXf &);
+
+    MatrixXf forward(const MatrixXf &);
+
+    void backward(const MatrixXf &);
 };
+
+LSTMNetwork::LSTMNetwork(const size_t &n_layers, const int &hidden_size, const int &n_tokens, const int &embedding_dim, const int &batch_size)
+    : embedding(Embedding(n_tokens, embedding_dim)), out(Dense(hidden_size, n_tokens)) {
+
+    this->n_layers = n_layers;
+    this->hidden_size = hidden_size;
+    this->n_tokens = n_tokens;
+    this->embedding_dim = embedding_dim;
+    this->batch_size = batch_size;
+
+    // initial layer (embedding -> hidden)
+    layers.push_back(LSTMCell(hidden_size, embedding_dim, batch_size));
+    for (size_t i = 1; i < n_layers; i++) {
+        // rest of the layers (hidden -> hidden)
+        layers.push_back(LSTMCell(hidden_size, hidden_size, batch_size));
+    }
+}
+
+MatrixXf LSTMNetwork::operator()(const MatrixXf &inputs) {
+    return forward(inputs);
+}
+
+MatrixXf LSTMNetwork::forward(const MatrixXf &inputs) {
+    std::vector<LSTMState> t_states;
+    MatrixXf output = embedding(inputs);
+    for (size_t i = 0; i < layers.size(); i++) {
+        output = layers[i](output);
+        t_states.push_back(layers[i].state);
+    }
+    states.push_back(t_states);
+    MatrixXf logits = out(output);
+    return F::log_softmax(logits);
+}
+
+// void LSTMNetwork::backward(const MatrixXf &loss_grad) {
+
+//     states.clear();
+// }
 } // namespace nn
