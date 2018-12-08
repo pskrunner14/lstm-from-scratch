@@ -68,5 +68,35 @@ MatrixXf Dense::forward(const MatrixXf &inputs) {
 // }
 
 class Embedding {
+  private:
+    MatrixXf embeddings;
+    int n_tokens;
+    int embedding_dim;
+
+  public:
+    explicit Embedding(const int &, const int &);
+
+    inline MatrixXf operator()(const MatrixXf &);
+
+    inline MatrixXf forward(const MatrixXf &);
+
+    // MatrixXf backward(const MatrixXf &, const MatrixXf &);
 };
+
+Embedding::Embedding(const int &n_tokens, const int &embedding_dim) : n_tokens(n_tokens), embedding_dim(embedding_dim) {
+    this->embeddings = MatrixXf(n_tokens, embedding_dim).setRandom();
+}
+
+inline MatrixXf Embedding::operator()(const MatrixXf &inputs) {
+    return forward(inputs);
+}
+
+inline MatrixXf Embedding::forward(const MatrixXf &inputs) {
+    // here inputs are one-hot encodings
+    return inputs * embeddings;
+}
+
+// MatrixXf Embedding::backward(const MatrixXf &inputs, const MatrixXf &gradients) {
+
+// }
 } // namespace nn
