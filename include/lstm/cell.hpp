@@ -25,14 +25,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
-#include <limits>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 
 #include <Eigen/Dense>
 using namespace Eigen;
@@ -60,12 +53,14 @@ class LSTMCell {
     Dense h2h;
 
   protected:
-    LSTMState states;
+    LSTMState state;
 
     friend class LSTMNetwork;
 
   public:
     explicit LSTMCell(const int &, const int &, const int &);
+
+    MatrixXf &operator()(const MatrixXf &);
 
     MatrixXf &forward(const MatrixXf &);
 
@@ -85,8 +80,12 @@ LSTMCell::LSTMCell(const int &hidden_size, const int &embedding_dim, const int &
     this->embedding_dim = embedding_dim;
     this->batch_size = batch_size;
 
-    states = LSTMState{MatrixXf(batch_size, hidden_size).setRandom() * F::glorot_uniform(batch_size, hidden_size),
-                       MatrixXf(batch_size, hidden_size).setRandom() * F::glorot_uniform(batch_size, hidden_size)};
+    this->state = LSTMState{MatrixXf(batch_size, hidden_size).setRandom() * F::glorot_uniform(batch_size, hidden_size),
+                            MatrixXf(batch_size, hidden_size).setRandom() * F::glorot_uniform(batch_size, hidden_size)};
+}
+
+MatrixXf &LSTMCell::operator()(const MatrixXf &xt) {
+    return forward(xt);
 }
 
 /**
@@ -97,7 +96,7 @@ LSTMCell::LSTMCell(const int &hidden_size, const int &embedding_dim, const int &
  */
 MatrixXf &LSTMCell::forward(const MatrixXf &xt) {
     // i2h + h2h = [it_pre, ft_pre, ot_pre, x_pre]
-    MatrixXf preactivations = i2h.forward(xt) + h2h.forward(states.h);
+    MatrixXf preactivations = i2h(xt) + h2h(state.h);
     // all pre sigmoid gates chunk
     MatrixXf pre_sigmoid_chunk = preactivations.block(0, 0, batch_size, 3 * hidden_size);
     // compute sigmoid on gates chunk
@@ -110,13 +109,13 @@ MatrixXf &LSTMCell::forward(const MatrixXf &xt) {
     MatrixXf ft = all_gates.block(0, hidden_size, batch_size, hidden_size);
     MatrixXf ot = all_gates.block(0, 2 * hidden_size, batch_size, hidden_size);
     // update cell state
-    MatrixXf c_forget = ft.cwiseProduct(states.c);
+    MatrixXf c_forget = ft.cwiseProduct(state.c);
     MatrixXf c_input = it.cwiseProduct(x_transform);
-    states.c = c_forget + c_input;
+    state.c = c_forget + c_input;
     // compute next hidden state
-    MatrixXf c_transform = F::tanh(states.c);
-    states.h = ot.cwiseProduct(c_transform);
-    return states.h;
+    MatrixXf c_transform = F::tanh(state.c);
+    state.h = ot.cwiseProduct(c_transform);
+    return state.h;
 }
 
 /**

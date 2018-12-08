@@ -24,16 +24,10 @@
 #pragma once
 
 #include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
-#include <limits>
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
@@ -45,7 +39,7 @@
 namespace util {
 
 /**
- * Loads Dataset.
+ * Load Dataset.
  * 
  * Loads a dataset by reading file into memory.
  * 
@@ -65,6 +59,14 @@ std::vector<std::vector<std::string>> load_dataset(const std::string &filename) 
     return contents;
 }
 
+/**
+ * Generate Vocabs.
+ * 
+ * Generates token-to-id and id-to-token vocabularies using training corpus.
+ * 
+ * @param corpus the corpus containing sequences of tokens.
+ * @returns the pair of token-to-id and id-to-token maps.
+ */
 std::pair<std::map<std::string, int>, std::map<int, std::string>> generate_vocabs(const std::vector<std::vector<std::string>> &corpus) {
     std::set<std::string> tokens;
     std::map<std::string, int> word_to_idx;

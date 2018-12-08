@@ -25,14 +25,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
-#include <limits>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 
 #include <Eigen/Dense>
 using namespace Eigen;
@@ -49,6 +42,8 @@ class Dense {
   public:
     explicit Dense(const int &, const int &);
 
+    MatrixXf operator()(const MatrixXf &);
+
     MatrixXf forward(const MatrixXf &);
 
     // MatrixXf backward(const MatrixXf &, const MatrixXf &);
@@ -57,6 +52,10 @@ class Dense {
 Dense::Dense(const int &num_inputs, const int &num_outputs) {
     W = MatrixXf(num_inputs, num_outputs).setRandom() * F::glorot_uniform(num_inputs, num_outputs);
     b = RowVectorXf(num_outputs).setZero();
+}
+
+MatrixXf Dense::operator()(const MatrixXf &inputs) {
+    return forward(inputs);
 }
 
 MatrixXf Dense::forward(const MatrixXf &inputs) {

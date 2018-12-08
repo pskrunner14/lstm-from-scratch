@@ -1,13 +1,8 @@
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
-#include <limits>
 #include <map>
-#include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -43,7 +38,7 @@ int main() {
     input.setRandom();
 
     // train the model
-    MatrixXf h = lstm.forward(input);
+    MatrixXf h = lstm(input);
     std::cout << h.rows() << "x" << h.cols() << std::endl;
 
     return 0;
